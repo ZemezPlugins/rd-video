@@ -1,0 +1,146 @@
+/*
+* @subsection   RD Video
+* @description  Describes style declarations for RD Video extension
+* @author       Rafael Shayvolodyan
+* @link         https://ua.linkedin.com/in/rafael-shayvolodyan-3a297b96
+* @version      1.0.0
+*/
+
+// General Styles
+.rd-video {
+  position: relative;
+
+  video {
+    margin: auto;
+    position: absolute;
+    opacity: 0;
+    visibility: hidden;
+    &.transition {
+      transition: .3s all linear;
+    }
+  }
+  // Video Wrapper
+  &-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: hidden;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+
+  // Preloader
+  &-preloader {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s all ease;
+    background: url(../images/preloader.gif) no-repeat rgba(#fff,.8) center center;
+    z-index: 5;
+  }
+
+  // When Loading
+  &.loading {
+
+    .rd-video-preloader {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  &-context-wrapper{
+    z-index: 99999;
+    position: fixed;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: none;
+    opacity: 0;
+    visibility: hidden;
+    text-align: left;
+
+    &.show {
+      background: rgba(#000, .7);
+      opacity: 1;
+      visibility: visible;
+     .rd-video-context{
+       bottom: 0;
+     }
+    }
+
+    transition: .3s background ease;
+    .rd-video-context{
+      padding: 2px 0;
+      background: $white;
+      position: absolute;
+      left: 0;
+      bottom: -100%;
+      right: 0;
+      transition: .5s bottom ease;
+    }
+
+    h6 {
+      padding: 5px 10px 5px 15px;
+      color: $default;
+
+      text-transform: none;
+    }
+    ul {
+      li {
+        cursor: pointer;
+        font-size: 14px;
+        color: $default;
+        padding: 5px 5px 5px 15px;
+        text-transform: none;
+        border-top: 1px solid #E9E9E9;
+        &:hover, &.active {
+          background: $primary;
+          color: $white;
+        }
+        &.active {
+          cursor: default;
+        }
+      }
+    }
+
+  }
+
+  // Context Menu
+  .desktop &-context-wrapper {
+    position: absolute;
+    width: 160px;
+    transform: none;
+    box-shadow: 3px 3px 4px rgba($default, .5);
+    background: $white;
+    &.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .rd-video-context{
+      position: static;
+    }
+  }
+
+  // Style for Background Video
+  &.rd-video-bg {
+    height: 100vh;
+    >.rd-video-wrapper, > .rd-video-wrapper > video {
+      z-index: -1;
+    }
+    .play-btn {
+      display: none;
+    }
+  }
+}
+
+// Custom Styles
+
+.rd-video{
+}
