@@ -338,8 +338,10 @@ function isIE() {
                     circlePos();
                 }
             });
+        });
 
-
+        $(window).on('resize', function () {
+            circlePos();
         });
     }
 })
