@@ -261,7 +261,7 @@ function isIE() {
         var state = false;
         var $placeholder = $('.player-placeholder');
 
-        function circlePos(){
+        function circlePos() {
             $wrapper.css({
                 'top': $placeholder.offset().top,
                 'left': $placeholder.offset().left,
@@ -341,7 +341,9 @@ function isIE() {
         });
 
         $(window).on('resize', function () {
-            circlePos();
+            if (!$wrapper.hasClass('clicked')) {
+                circlePos();
+            }
         });
     }
 })
