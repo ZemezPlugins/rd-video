@@ -2,7 +2,7 @@
  * @module       RDVideo
  * @author       Rafael Shayvolodyan
  * @see          https://ua.linkedin.com/in/rafael-shayvolodyan-3a297b96
- * @version      1.0.0
+ * @version      1.0.2
 ###
 
 (($, document, window) ->
@@ -35,6 +35,7 @@
       muted: true
       loop: true
       autoplay: true
+      preload: 'auto' 
       fps: 30
       transitionTime: 300
       posterType: 'jpg'
@@ -83,6 +84,7 @@
       ctx.suffix = ctx.getSuffix()
       ctx.getConnectionSpeed(ctx.path, ->
         ctx.init(ctx)
+
       )
 
       return
@@ -260,11 +262,12 @@
       if ctx.$video2?
         autoplay = not ctx.$video[0].paused
       else if ctx.isBG
-        autoplay = if @.$element.attr('data-rd-video-autoplay') then ctx.$element.attr('data-rd-video-autoplay') else options.autoplay
+        autoplay = if @.$element.attr('data-rd-video-autoplay') then ctx.$element.attr('data-rd-video-autoplay') is "true" else options.autoplay
       volume = if @.$element.attr('data-rd-video-volume') then ctx.$element.attr('data-rd-video-volume') else options.volume
       muted = if @.$element.attr('data-rd-video-muted') then ctx.$element.attr('data-rd-video-muted') is 'true' else options.muted
       playbackRate = if @.$element.attr('data-rd-video-pbrate') then ctx.$element.attr('data-rd-video-pbrate') else options.playbackRate
       controls = if @.$element.attr('data-rd-video-controls') then ctx.$element.attr('data-rd-video-controls') is 'true' else options.controls
+      preload = if @.$element.attr('data-rd-video-preload') then ctx.$element.attr('data-rd-video-preload') else options.preload
 
       try
         $video
@@ -277,6 +280,7 @@
           playbackRate: if ctx.$video2? then ctx.$video.prop('playbackRate') else playbackRate
           defaultPlaybackRate: if ctx.$video2? then ctx.$video.prop('playbackRate') else playbackRate
           controls: if ctx.$video2? then ctx.$video.prop('controls') else controls
+          preload: if ctx.$video2? then ctx.$video.prop('preload') else preload
         })
       catch e
         throw new Error(NOT_IMPLEMENTED_MSG)
@@ -614,13 +618,11 @@
         ctx.$context.removeClass('show')
 
       if offt < scrt + wh and offt + h > scrt
-        if ctx.$element.hasClass('viewport-stopped') and ctx.$element.hasClass(@.classNames.paused)
+        if ctx.$element.hasClass(@.classNames.paused)
           ctx.play()
-          ctx.$element.removeClass('viewport-stopped')
       else
         if ctx.$element.hasClass(@.classNames.playing)
           ctx.pause()
-          ctx.$element.addClass('viewport-stopped')
       return
 
     ###*
@@ -749,35 +751,35 @@
       wrapperHeight = $wrapper.outerHeight()
       wrapperWidth = $wrapper.outerWidth()
 
+      if $video?
+        video = $video[0]
 
-      video = $video[0]
+        # Get a native video size
+        videoHeight = video.videoHeight
+        videoWidth = video.videoWidth
+        if videoHeight is 0 or videoWidth is 0
+          return
 
-      # Get a native video size
-      videoHeight = video.videoHeight
-      videoWidth = video.videoWidth
-      if videoHeight is 0 or videoWidth is 0
-        return
-
-      if wrapperWidth / videoWidth > wrapperHeight / videoHeight
-        $video.css({
-        # +2 pixels to prevent an empty space after transformation
-          width: wrapperWidth
-          left: 0
-          height: 'auto'
-        })
-        $video.css({
-          top:  (wrapperHeight - video.offsetHeight ) * (parseInt(@.position.y.replace('%', '')) / 100)
-        })
-      else
-        $video.css({
-          width: 'auto'
-        # +2 pixels to prevent an empty space after transformation
-          height: wrapperHeight
-          top: 0
-        })
-        $video.css({
-          left:  (wrapperWidth - video.offsetWidth ) * (parseInt(@.position.x.replace('%', '')) / 100)
-        })
+        if wrapperWidth / videoWidth > wrapperHeight / videoHeight
+          $video.css({
+          # +2 pixels to prevent an empty space after transformation
+            width: wrapperWidth
+            left: 0
+            height: 'auto'
+          })
+          $video.css({
+            top:  (wrapperHeight - video.offsetHeight ) * (parseInt(@.position.y.replace('%', '')) / 100)
+          })
+        else
+          $video.css({
+            width: 'auto'
+          # +2 pixels to prevent an empty space after transformation
+            height: wrapperHeight
+            top: 0
+          })
+          $video.css({
+            left:  (wrapperWidth - video.offsetWidth ) * (parseInt(@.position.x.replace('%', '')) / 100)
+          })
       return
 
     ###*

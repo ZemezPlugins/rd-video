@@ -2,7 +2,7 @@
  * @module       RDVideo
  * @author       Rafael Shayvolodyan
  * @see          https://ua.linkedin.com/in/rafael-shayvolodyan-3a297b96
- * @version      1.0.0
+ * @version      1.0.2
  */
 
 (function() {
@@ -37,6 +37,7 @@
         muted: true,
         loop: true,
         autoplay: true,
+        preload: 'auto',
         fps: 30,
         transitionTime: 300,
         posterType: 'jpg',
@@ -237,7 +238,7 @@
        */
 
       RDVideo.prototype.createVideo = function(ctx) {
-        var $video, allsuffixes, autoplay, controls, e, error, i, index, j, len, muted, options, path, playbackRate, sources, suffix, suffixes, sufix, volume;
+        var $video, allsuffixes, autoplay, controls, e, error, i, index, j, len, muted, options, path, playbackRate, preload, sources, suffix, suffixes, sufix, volume;
         options = ctx.options;
         sources = '';
         autoplay = false;
@@ -294,12 +295,13 @@
         if (ctx.$video2 != null) {
           autoplay = !ctx.$video[0].paused;
         } else if (ctx.isBG) {
-          autoplay = this.$element.attr('data-rd-video-autoplay') ? ctx.$element.attr('data-rd-video-autoplay') : options.autoplay;
+          autoplay = this.$element.attr('data-rd-video-autoplay') ? ctx.$element.attr('data-rd-video-autoplay') === "true" : options.autoplay;
         }
         volume = this.$element.attr('data-rd-video-volume') ? ctx.$element.attr('data-rd-video-volume') : options.volume;
         muted = this.$element.attr('data-rd-video-muted') ? ctx.$element.attr('data-rd-video-muted') === 'true' : options.muted;
         playbackRate = this.$element.attr('data-rd-video-pbrate') ? ctx.$element.attr('data-rd-video-pbrate') : options.playbackRate;
         controls = this.$element.attr('data-rd-video-controls') ? ctx.$element.attr('data-rd-video-controls') === 'true' : options.controls;
+        preload = this.$element.attr('data-rd-video-preload') ? ctx.$element.attr('data-rd-video-preload') : options.preload;
         try {
           $video.prop({
             autoplay: autoplay,
@@ -308,7 +310,8 @@
             defaultMuted: ctx.$video2 != null ? ctx.$video.prop('muted') : muted,
             playbackRate: ctx.$video2 != null ? ctx.$video.prop('playbackRate') : playbackRate,
             defaultPlaybackRate: ctx.$video2 != null ? ctx.$video.prop('playbackRate') : playbackRate,
-            controls: ctx.$video2 != null ? ctx.$video.prop('controls') : controls
+            controls: ctx.$video2 != null ? ctx.$video.prop('controls') : controls,
+            preload: ctx.$video2 != null ? ctx.$video.prop('preload') : preload
           });
         } catch (error) {
           e = error;
@@ -680,14 +683,12 @@
           ctx.$context.removeClass('show');
         }
         if (offt < scrt + wh && offt + h > scrt) {
-          if (ctx.$element.hasClass('viewport-stopped') && ctx.$element.hasClass(this.classNames.paused)) {
+          if (ctx.$element.hasClass(this.classNames.paused)) {
             ctx.play();
-            ctx.$element.removeClass('viewport-stopped');
           }
         } else {
           if (ctx.$element.hasClass(this.classNames.playing)) {
             ctx.pause();
-            ctx.$element.addClass('viewport-stopped');
           }
         }
       };
@@ -844,30 +845,32 @@
         $wrapper = this.$wrapper;
         wrapperHeight = $wrapper.outerHeight();
         wrapperWidth = $wrapper.outerWidth();
-        video = $video[0];
-        videoHeight = video.videoHeight;
-        videoWidth = video.videoWidth;
-        if (videoHeight === 0 || videoWidth === 0) {
-          return;
-        }
-        if (wrapperWidth / videoWidth > wrapperHeight / videoHeight) {
-          $video.css({
-            width: wrapperWidth,
-            left: 0,
-            height: 'auto'
-          });
-          $video.css({
-            top: (wrapperHeight - video.offsetHeight) * (parseInt(this.position.y.replace('%', '')) / 100)
-          });
-        } else {
-          $video.css({
-            width: 'auto',
-            height: wrapperHeight,
-            top: 0
-          });
-          $video.css({
-            left: (wrapperWidth - video.offsetWidth) * (parseInt(this.position.x.replace('%', '')) / 100)
-          });
+        if ($video != null) {
+          video = $video[0];
+          videoHeight = video.videoHeight;
+          videoWidth = video.videoWidth;
+          if (videoHeight === 0 || videoWidth === 0) {
+            return;
+          }
+          if (wrapperWidth / videoWidth > wrapperHeight / videoHeight) {
+            $video.css({
+              width: wrapperWidth,
+              left: 0,
+              height: 'auto'
+            });
+            $video.css({
+              top: (wrapperHeight - video.offsetHeight) * (parseInt(this.position.y.replace('%', '')) / 100)
+            });
+          } else {
+            $video.css({
+              width: 'auto',
+              height: wrapperHeight,
+              top: 0
+            });
+            $video.css({
+              left: (wrapperWidth - video.offsetWidth) * (parseInt(this.position.x.replace('%', '')) / 100)
+            });
+          }
         }
       };
 
